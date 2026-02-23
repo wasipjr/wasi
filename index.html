@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برای آرزو - از طرف واسع</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;300;400;500;700;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #05020a;
+            color: white;
+            margin: 0;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .font-handwriting {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        /* Premium Background Gradients */
+        .bg-gradient-main {
+            background: linear-gradient(to bottom right, #2E0219, #4A0428, #0f0518);
+        }
+
+        /* Animated Blobs */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.2;
+            z-index: 0;
+            animation: move 10s infinite ease-in-out;
+        }
+
+        @keyframes move {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        /* Floating Particles */
+        .particle {
+            position: absolute;
+            color: rgba(254, 205, 211, 0.2);
+            pointer-events: none;
+            z-index: 1;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.5; }
+            100% { transform: translateY(-200px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        /* Page Transitions */
+        .fade-in {
+            animation: fadeIn 0.7s forwards;
+        }
+
+        .fade-out {
+            animation: fadeOut 0.6s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px) scale(0.98); filter: blur(5px); }
+            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+            to { opacity: 0; transform: translateY(-10px) scale(1.02); filter: blur(5px); }
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gradient-main min-h-screen">
+
+    <!-- Background Decoration -->
+    <div id="blob1" class="blob bg-rose-600 w-[60vh] h-[60vh] top-[-10%] left-[-10%]"></div>
+    <div id="blob2" class="blob bg-purple-600 w-[60vh] h-[60vh] bottom-[-10%] right-[-10%]" style="animation-delay: 4s;"></div>
+    <div id="particles-container"></div>
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 p-6 flex justify-between items-center opacity-50 hover:opacity-100 transition-opacity">
+        <div class="flex items-center gap-2">
+            <i data-lucide="infinity" class="text-rose-400 w-5 h-5"></i>
+            <span class="text-[10px] font-bold tracking-[0.3em] uppercase">AREZOO & WASE</span>
+        </div>
+        <button id="music-toggle" class="text-white/50 hover:text-rose-300 transition p-2">
+            <i data-lucide="volume-x" class="w-5 h-5"></i>
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <main id="app-container" class="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 py-12">
+        <!-- Content will be injected here by JS -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="fixed bottom-4 left-0 right-0 text-center z-10 pointer-events-none">
+        <p class="text-[10px] text-white/10 uppercase tracking-widest flex items-center justify-center gap-2">
+            رمضان مبارک <i data-lucide="moon" class="w-2 h-2"></i> نازدانه من
+        </p>
+    </footer>
+
+    <script>
+        // --- Story Data ---
+        const STORY = {
+            'intro': {
+                type: 'intro',
+                title: "برای آرزو",
+                subtitle: "یک تجربه شیرین از طرف واسع، مخصوصِ نازدانه‌اش",
+                action: "لمس کن تا وارد دنیای واسع شوی",
+                next: 'check_in'
+            },
+            'check_in': {
+                type: 'choice',
+                question: "سلام به آرزویِ ۱۷ ساله و شیرینِ من...\nدر این روزهای رمضان، قلبت در چه حال است؟",
+                options: [
+                    { text: "در حال نقشه‌ کشیدن برای آزار دادن واسع 😈", next: 'resp_tease' },
+                    { text: "کمی گرسنه و تشنه اما پر از عشق 🌙", next: 'resp_ramadan' },
+                    { text: "منتظر واسع تا باز نازم را بردارد 👸", next: 'resp_naz' }
+                ]
+            },
+            'resp_tease': {
+                type: 'message',
+                text: "می‌دانم که آزار دادنت هم شیرین است. واسع عاشق همین شیطنت‌های توست!",
+                next: 'wish'
+            },
+            'resp_ramadan': {
+                type: 'message',
+                text: "عبادت‌هایت قبول باشد گلِ من. کاش افطار را با خنده‌های تو باز می‌کردم.",
+                next: 'wish'
+            },
+            'resp_naz': {
+                type: 'message',
+                text: "ناز کردن از تو، و تمام عمر ناز کشیدن از واسع. این وظیفه من است!",
+                next: 'wish'
+            },
+            'wish': {
+                type: 'choice',
+                question: "آرزو جان، کدام کارِ تو واسع را بیشتر دیوانه می‌کند؟",
+                options: [
+                    { text: "وقتی با لجبازی‌هایت اذیتم می‌کنی 😝", next: 'moment_tease' },
+                    { text: "وقتی با آن نگاهِ مقبول خجالتم می‌دهی 😊", next: 'moment_beauty' },
+                    { text: "وقتی می‌گویی «واسع، نازم را بخر!» 🧸", next: 'moment_hug' }
+                ]
+            },
+            'moment_tease': {
+                type: 'message',
+                text: "حتی وقتی آزارم می‌دهی، در دلم می‌گویم: «چقدر این دختر شیرین است!»",
+                next: 'input_love'
+            },
+            'moment_beauty': {
+                type: 'message',
+                text: "۱۷ سالگی‌ات مثل یک غنچه تازه شکفته است. مقبول‌ترینِ منی آرزو.",
+                next: 'input_love'
+            },
+            'moment_hug': {
+                type: 'message',
+                text: "من همیشه اینجا هستم تا تمام نازهایت را به جان بخرم.",
+                next: 'input_love'
+            },
+            'input_love': {
+                type: 'input',
+                question: "یک آرزوی کوچک برای ماه رمضانِ ما بنویس...",
+                placeholder: "مثلاً: افطار کنار هم...",
+                next: 'reveal'
+            },
+            'reveal': {
+                type: 'final',
+                title: "آرزویِ مقبول من...",
+                message: "درست است که خیلی اذیتم می‌کنی و گاهی نفسم را می‌گیری، اما...",
+                highlight: "تو تمامِ دنیای واسع هستی.",
+                signature: "عاشقِ همیشگی‌ات، واسع ❤️"
+            }
+        };
+
+        let currentStep = 'intro';
+        const container = document.getElementById('app-container');
+
+        // --- Render Functions ---
+        function render() {
+            const step = STORY[currentStep];
+            let html = '';
+
+            if (step.type === 'intro') {
+                html = `
+                    <div class="flex flex-col items-center justify-center h-full text-center space-y-10 fade-in">
+                        <div class="relative">
+                            <div class="absolute inset-0 bg-rose-500 blur-xl opacity-30 animate-pulse"></div>
+                            <div class="relative flex items-center gap-4 text-rose-100">
+                                <i data-lucide="moon" style="width: 48px; height: 48px;"></i>
+                                <i data-lucide="heart" class="text-rose-300 animate-pulse fill-current" style="width: 32px; height: 32px;"></i>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <h1 class="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-rose-100 to-rose-300 tracking-tighter drop-shadow-lg leading-tight p-2">
+                                ${step.title}
+                            </h1>
+                            <p class="text-lg text-rose-200/80 font-light tracking-wide px-4">
+                                ${step.subtitle}
+                            </p>
+                        </div>
+                        <button onclick="transitionTo('${step.next}')" class="group relative px-8 py-4 bg-white/5 border border-white/10 rounded-full backdrop-blur-md hover:bg-white/10 transition-all duration-500 overflow-hidden">
+                            <span class="relative z-10 text-white font-medium flex items-center gap-2">
+                                <i data-lucide="sparkles" class="w-4 h-4"></i> ${step.action}
+                            </span>
+                        </button>
+                    </div>
+                `;
+            } else if (step.type === 'choice') {
+                html = `
+                    <div class="w-full max-w-md mx-auto fade-in">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white text-center mb-10 leading-relaxed whitespace-pre-line drop-shadow-md">
+                            ${step.question}
+                        </h2>
+                        <div class="space-y-4">
+                            ${step.options.map((opt, i) => `
+                                <button onclick="transitionTo('${opt.next}')" class="w-full p-5 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md text-white/90 text-lg hover:bg-white/10 hover:border-rose-400/30 transition-all duration-300 text-right flex items-center justify-between group">
+                                    <i data-lucide="arrow-left" class="w-5 h-5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-rose-300"></i>
+                                    <span>${opt.text}</span>
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (step.type === 'message') {
+                html = `
+                    <div class="flex flex-col items-center text-center max-w-sm mx-auto fade-in cursor-pointer" onclick="transitionTo('${step.next}')">
+                        <div class="mb-8 p-4 bg-white/5 rounded-full border border-white/10 shadow-2xl">
+                            <i data-lucide="stars" class="text-amber-200 w-8 h-8 animate-pulse"></i>
+                        </div>
+                        <p class="text-2xl md:text-3xl font-medium text-white leading-loose drop-shadow-lg">
+                            "${step.text}"
+                        </p>
+                        <div class="mt-12 text-sm text-white/30 animate-bounce">
+                            (برای ادامه صفحه را لمس کن)
+                        </div>
+                    </div>
+                `;
+            } else if (step.type === 'input') {
+                html = `
+                    <div class="w-full max-w-md mx-auto text-center fade-in">
+                        <h2 class="text-2xl font-bold text-white mb-8">
+                            ${step.question}
+                        </h2>
+                        <div class="relative mb-8 group">
+                            <div class="absolute -inset-0.5 bg-gradient-to-r from-rose-500 to-purple-600 rounded-2xl blur opacity-30 group-hover:opacity-75 transition duration-500"></div>
+                            <input type="text" id="user-input" placeholder="${step.placeholder}" class="relative w-full bg-[#1a0b18] text-white rounded-2xl p-5 text-center text-xl outline-none placeholder-white/30">
+                        </div>
+                        <button onclick="handleInputSubmit('${step.next}')" class="w-full py-4 rounded-2xl font-bold text-lg bg-rose-600 text-white shadow-lg shadow-rose-900/50 transition-all active:scale-95">
+                            فرستادن برای واسع
+                        </button>
+                    </div>
+                `;
+            } else if (step.type === 'final') {
+                html = `
+                    <div class="text-center max-w-md mx-auto relative fade-in">
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-rose-500/20 rounded-full blur-[80px] pointer-events-none"></div>
+                        <h2 class="text-3xl font-bold text-white mb-6 drop-shadow-lg">${step.title}</h2>
+                        <p class="text-xl text-rose-100/90 mb-8 leading-relaxed font-light px-4">${step.message}</p>
+                        <div class="py-8 border-y border-white/10 mb-8 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-white/5 skew-x-12 opacity-50"></div>
+                            <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-rose-200 via-white to-rose-200 drop-shadow-2xl relative z-10 leading-tight">
+                                ${step.highlight}
+                            </h1>
+                        </div>
+                        <p class="text-2xl font-handwriting text-rose-400 mt-4 rotate-[-2deg] opacity-90 drop-shadow-sm">${step.signature}</p>
+                        <button onclick="location.reload()" class="mt-16 text-xs text-white/30 hover:text-white uppercase tracking-widest transition">
+                            شروع دوباره
+                        </button>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function transitionTo(nextStep) {
+            container.firstElementChild.classList.add('fade-out');
+            setTimeout(() => {
+                currentStep = nextStep;
+                render();
+            }, 600);
+        }
+
+        function handleInputSubmit(nextStep) {
+            const val = document.getElementById('user-input').value;
+            if (val.trim()) transitionTo(nextStep);
+        }
+
+        // --- Background Particles ---
+        function createParticles() {
+            const container = document.getElementById('particles-container');
+            const particleCount = 15;
+            const symbols = ['Arezoo', 'Wase', '❤', '🌙'];
+
+            for (let i = 0; i < particleCount; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                p.style.left = Math.random() * 100 + '%';
+                p.style.top = Math.random() * 100 + '%';
+                p.style.fontSize = (Math.random() * 10 + 8) + 'px';
+                p.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                p.style.animationDelay = (Math.random() * 5) + 's';
+                container.appendChild(p);
+            }
+        }
+
+        // Initialize
+        createParticles();
+        render();
+
+        // Music Toggle Mock
+        document.getElementById('music-toggle').addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            if (icon.getAttribute('data-lucide') === 'volume-x') {
+                icon.setAttribute('data-lucide', 'volume-2');
+                this.classList.add('text-rose-300');
+            } else {
+                icon.setAttribute('data-lucide', 'volume-x');
+                this.classList.remove('text-rose-300');
+            }
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
